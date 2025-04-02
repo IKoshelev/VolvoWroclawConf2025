@@ -30,4 +30,35 @@ It is also for this reason, that companies like Microsoft and Jetbrains provide 
 
 Another account you will need is with [Google](https://accounts.google.com/) which you will use to access Firebase Cloud.  
 
-## 
+## Setting up main Azure cloud
+
+_please note, that newly created/modified Azure Resource take a few minutes to be visible to other Azure Resources. If something is not showing up in a dropdown where you expect it - give it 2-3 minutes and restart the process._
+
+First thing you will need to do is [create an Azure Cloud Resource Group](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups). Resource Groups are arbitrary containers that group your Cloud resources together to easily manage their costs and budget alarms. You can have multiple Resource Groups, it's up to you, what kind of logics to use to group resources, it does not restrict any connectivity or interaction between them. You do, however, need to decided on the preferred physical location (data center location). In a multi-region cloud you can easily spread your resources across different location and this *will* affect both their interactions and latency. For your first project - just choose a data-center closest to you and keep everything there. 
+
+...
+
+The final thing you will need is to [setup a Budget](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets?tabs=psbudget). Cloud bills are notoriously unpredictable, and while you will mostly be using free-tier resource, a small monthly fee is still required for costs like file storage. Not to mention, that malicious actors have been known to bombard public APIs with DDOS attacks aimed at artificially raking up the bills. I recommend setting up a 10$ monthly budget that will shut down public resources in the group.
+
+Start by creating an [Automation Account](https://learn.microsoft.com/en-us/azure/automation/quickstarts/create-azure-automation-account-portal). In the account, go to "Identity" -> "System assigned", click "Azure role assignments" -> "Add role assignment" and give your Automation Account "Contributor" role in Scope of your Resource Group. Than go to "Process Automation" -> "Runbooks" and create a Powershell Runbook with the following script: 
+
+```powershell
+Connect-AzAccount -Identity
+Get-AzResource -ResourceGroupName "volvo-wroclaw-conf-2025" | ForEach-Object {
+    Stop-AzResource -ResourceId $_.Id -Force
+}
+```
+
+Save and **Publish** Runbook. Run it once to make sure it stops the resources. [Create an Action Group](https://learn.microsoft.com/en-us/azure/azure-monitor/alerts/action-groups) using the Runbook, than go to your Resource Group in Azure, in "Cost Management" -> "Budgets", create a Budget for 10$ and assign the Action Group to it. 
+
+## What we have skipped 
+
+Some of these topics warrant a whole separate book, even several.
+
+[Infrastructure as code](https://learn.microsoft.com/en-us/azure/templates/) - describing cloud resources to be deployed in a domain language like Bicep or Terraform
+
+[Azure Access Control with RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview) - controlling access and permissions in Azure Cloud
+
+[Azure CLI / Powershell modules](https://learn.microsoft.com/en-us/cli/azure/) - script automation for Azure 
+
+[Tagging Azure resources](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources) - adding useful discoverable metadata bits to cloud resources like admin email, or responsible department 
