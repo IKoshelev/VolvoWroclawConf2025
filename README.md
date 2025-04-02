@@ -68,7 +68,7 @@ Your resource group should now look like this:
 
 Firebase Cloud is a specialized cloud offered by Google on top of its normal Google Cloud. Firebase concentrates on services required by applications, mobile, web and others. We will use if for push-notifications and user sign-in with different identity providers (i.e. "Sign in with Google").
 
-Stat by [registering a free account](https://firebase.google.com/) and, [creating your Firebase Project + Application](https://firebase.google.com/docs/web/setup). After that, go to your newly-created App and make  in "Build" -> "Authentication" click "Get Started" to add this functionality to your Firebase App. You will also have to choose and configure Identity provides you want to have in your app on the "Sign-in method" tab.
+Stat by [registering a free account](https://firebase.google.com/) and, [creating your Firebase Project + Application](https://firebase.google.com/docs/web/setup). After that, go to your newly-created App and make  in "Build" -> "Authentication" click "Get Started" to add this functionality to your Firebase App. You will also have to choose and configure Identity provides you want to have in your app on the "Sign-in method" tab. Please note, that most providers will require registration and possible additional setup on their side before they accept sign-in requests from your application. Follow instructions given by Firebase.  
 
 ![Firebase sign-in providers](./readme/Firebase-sign-in-poriders.png)
 
