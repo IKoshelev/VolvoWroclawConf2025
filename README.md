@@ -1,6 +1,6 @@
 # VolvoWroclawConf2025
 
-This repository showcases how to make a web-page that act as an application, a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app) that can be installed on desktops and mobile devices and has capabilities comparable to a native applications.
+This repository showcases how to make a web-page that can act as an application, a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app) that can be installed on desktops and mobile devices and has capabilities comparable to a native applications.
 
 Hosted demo is available at [volvo-wroclaw-conf-2025.com](https://volvo-wroclaw-conf-2025.com)
 
@@ -17,6 +17,8 @@ PWAs have a major advantage over modern day native mobile apps - PWAs don't have
 ![PWAs](./readme/PWAs.png)
 
 A typical PWA is made with JavaScript/TypeScript and one of the leading [Single Page Application](https://developer.mozilla.org/en-US/docs/Glossary/SPA) frameworks like Angular / React / SolidJS / Svelte etc... However, modern web browsers have become full fledged application platforms in the last 15 years and one of their key new capabilities is [Web Assembly](https://webassembly.org/) or WASM. WASM is one of the latest aspirant on the arena of Virtual Machines (like JVM, CLR or LLVM), it is designed as a portable compilation target for programming languages and let's you create web applications and by extension PWAs with a variety of programming languages like Python, Rust, C# etc... JavaScript still remains "Lingua franca" of modern web, and is primary choice for PWAs, but making both UI and Server part in a single language in which you are well proficient has its own advantages. Due to this reason, I have gone away from "shortest path" rule here and decided to showcase a Blazor PWA made in C#. You will never be able to get rid of JS completely in a PWA, but WASM will allow you to limit it to technical glue-code and make business logic in your language of choice.
+
+*Unless you want to dive deeper into the "works offline" aspect, making your web page into a PWA is just a cherry on top, a way to provide "app experience" to your users. Everything in this article will work just the same for a regular web app / web site. PWA is only required for push-notifications on some mobile platforms. *
 
 ## Modern Cloud and development ecosystem 
 
@@ -42,9 +44,9 @@ The first thing we will [create is a CosmosDB account with activated lifetime fr
 
 _The following two resources can just as easily be created directly from Visual  Studio when you want to deploy corresponding project for the first time._
 
-Next we will [create our API - Azure Functions with Consume Tier](https://learn.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal?pivots=programming-language-csharp). Make sure it uses the "Consumption" Tier. "Serverless" functions are the simplest possible way to run code on an HTTP request. In general - they are the simplest possible way to run code in response to many different kind of events - timers, queue messages, DB writes, [etc...](https://learn.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings?tabs=isolated-process%2Cnode-v4%2Cpython-v2&pivots=programming-language-csharp#supported-bindings). We will use this Azure Function resource to handle both User API and Admin API.  
+Next we will make a hosting four our PWA - a [Static Web App](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/Microsoft.StaticApp). This resource has very little to configure, apart from choosing "other" as deployment source. Once it is created - you will get a semi-random generated name for it, and it will not be pretty. The url of this static web app is the only url which your users will actually see, so it makes sense to [attach a custom domain to it](https://learn.microsoft.com/en-us/azure/static-web-apps/custom-domain). You can even buy one directly from Azure if you want to save time (though they are expensive by domain standards - 12$ for a year). 
 
-The last remaining resource we will make is hosting four our PWA - a [Static Web App](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/Microsoft.StaticApp). This resource has very little to configure, apart from choosing "other" as deployment source. Once it is created - you will get a semi-random generated name for it, and it will not be pretty. The url of this static web app is the only url which your users will actually see, so it makes sense to [attach a custom domain to it](https://learn.microsoft.com/en-us/azure/static-web-apps/custom-domain). You can even buy one directly from Azure if you want to save time (though they are expensive by domain standards - 12$ for a year). 
+Now we will [make our API - Azure Functions with Consume Tier](https://learn.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal?pivots=programming-language-csharp). Make sure it uses the "Consumption" Tier. "Serverless" functions are the simplest possible way to run code on an HTTP request. In general - they are the simplest possible way to run code in response to many different kind of events - timers, queue messages, DB writes, [etc...](https://learn.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings?tabs=isolated-process%2Cnode-v4%2Cpython-v2&pivots=programming-language-csharp#supported-bindings). We will use this Azure Function resource to handle both User API and Admin API. Once the resource is provisioned - go to "API" -> "CORS" and add the domain urls used by your Static Web App   
 
 The final thing you will need is to setup a Budget. Cloud bills are notoriously unpredictable, and while you will mostly be using free-tier resource, a small monthly fee is still required for costs like file storage. Not to mention, that **malicious actors have been known to bombard public APIs with DDOS attacks aimed at artificially raking up the bills**. I recommend setting up a 10$ monthly budget that will shut down API in the group.
 
@@ -79,7 +81,7 @@ After you're done setting up - get your [Firebase public config](https://firebas
 
 ## Further in-depth reading
 
-Some of these topics warrant a whole separate book, maybe even several. The list of topics goes beyond even full-stack and into one-man-army territory, so don't try to chase everything at once. The harsh reality of modern day development is that it doesn't make sense to learn non-fundamental technologies that you won't use within the next year, since 2-3 years from now it may well be deprecated or todays tutorial outdated.
+Some of these topics warrant a whole separate book, maybe even several. The list of topics goes beyond even full-stack and into one-man-army territory, so don't try to chase everything at once, spend 10 minutes reading on each topic, and then decide, if you need to know more. The harsh reality of modern day development is that it doesn't make sense to learn non-fundamental technologies that you won't use within the next year, since 2-3 years from now it may well be deprecated or todays tutorial outdated.
 
 [Infrastructure as code](https://learn.microsoft.com/en-us/azure/templates/) - describing cloud resources to be deployed in a domain language like Bicep (replacement for ARM) or Terraform
 
