@@ -41,7 +41,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Http.PostAsync("https://volvo-wroclaw-conf-2025-api.azurewebsites.net/api/login", null);
+        await Http.PostAsync("/api/login", null);
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 
