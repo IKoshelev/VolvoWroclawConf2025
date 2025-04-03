@@ -31,4 +31,4 @@ jobs:
           action: "upload"
           app_location: "DemoPWA"
           api_location: "Server"
-          output_location: "DemoPWA/bin/Release/net8.0/wwwroot"
+          output_location: "wwwroot"
