@@ -11,6 +11,7 @@ builder.ConfigureFunctionsWebApplication();
 //     .AddApplicationInsightsTelemetryWorkerService()
 //     .ConfigureFunctionsApplicationInsights();
 
+
 builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri("https://volvo-wroclaw-conf-2025-api.azurewebsites.net/api/");

@@ -1,4 +1,5 @@
 ﻿@page "/weather"
+@using Shared.UserAPI
 @inject HttpClient Http
 
 <PageTitle>Weather</PageTitle>
@@ -41,7 +42,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Http.PostAsync("/api/login", null);
+        await Http.PostAsJsonAsync("/api/login", new LoginRequest()
+        {
+            Token = "",
+            Name = "",
+            Email = ""
+
+        });
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 
