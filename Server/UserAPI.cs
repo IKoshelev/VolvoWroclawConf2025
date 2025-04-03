@@ -23,11 +23,11 @@ public class UserAPI(
         //// Configure the cookie
         CookieOptions option = new CookieOptions();
         option.Expires = DateTime.Now.AddMonths(1);
-        option.Domain = "volvo-wroclaw-conf-2025-api.azurewebsites.net";
-        option.Path = "/";
+        //option.Domain = "volvo-wroclaw-conf-2025-api.azurewebsites.net";
+        //option.Path = "/";
         option.HttpOnly = true;
         option.Secure = true;
-        option.SameSite = SameSiteMode.None;
+        //option.SameSite = SameSiteMode.None;
 
         //// A little non logical way to actually get the HttpResponse (from the HttpRequest and its HttpContext)
         req.HttpContext.Response.Cookies.Append("ggggggggggggggg", "ddddddddddddddddd", option);
