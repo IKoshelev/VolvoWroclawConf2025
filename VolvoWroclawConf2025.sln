@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35913.81 d17.13
+VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoPWA", "DemoPWA\DemoPWA.csproj", "{CF460688-66C2-4C7C-9ADB-AA8E1942777D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{4455D152-341C-4B75-9B5D-D28AD86B2FEC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{AC31B7E6-A960-48EC-A58B-5CD3BE36773D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoPWA.BFF", "DemoPWA.BFF\DemoPWA.BFF.csproj", "{9F874BA4-CA9E-4BB0-A16C-E2164BBECB84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{AC31B7E6-A960-48EC-A58B-5CD3BE36773D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC31B7E6-A960-48EC-A58B-5CD3BE36773D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC31B7E6-A960-48EC-A58B-5CD3BE36773D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F874BA4-CA9E-4BB0-A16C-E2164BBECB84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F874BA4-CA9E-4BB0-A16C-E2164BBECB84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F874BA4-CA9E-4BB0-A16C-E2164BBECB84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F874BA4-CA9E-4BB0-A16C-E2164BBECB84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

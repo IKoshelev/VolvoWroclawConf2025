@@ -8,8 +8,15 @@
 
     public class LoginRequest
     {
-        string Token { get; set; }
-        string Name { get; set; }
-        string Email { get; set; }
+        public string Token { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
     };
+
+    public class LoginResponse
+    {
+        public string UserId { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+    }
 }

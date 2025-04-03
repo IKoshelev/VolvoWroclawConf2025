@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Shared.UserAPI;
+using System.Text.Json;
 
 namespace Server;
 
@@ -17,23 +19,18 @@ public class UserAPI(
 {
 
     [Function("login")]
-    public IActionResult Run(
+    public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
-        //// Configure the cookie
-        CookieOptions option = new CookieOptions();
-        option.Expires = DateTime.Now.AddMonths(1);
-        //option.Domain = "volvo-wroclaw-conf-2025-api.azurewebsites.net";
-        //option.Path = "/";
-        option.HttpOnly = true;
-        option.Secure = true;
-        //option.SameSite = SameSiteMode.None;
+        var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body);
 
-        //// A little non logical way to actually get the HttpResponse (from the HttpRequest and its HttpContext)
-        req.HttpContext.Response.Cookies.Append("ggggggggggggggg", "ddddddddddddddddd", option);
+        // todo verify token
 
-
-        logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Welcome to Azure Functions!");
+        return new JsonResult(new LoginResponse()
+        {
+            FullName = "Jhon Smith",
+            Email = "a@b.c",
+            UserId = "12345"
+        });
     }
 }
