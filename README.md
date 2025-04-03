@@ -100,3 +100,5 @@ Some of these topics warrant a whole separate book, maybe even several. The list
 [Responsive design with CSS](https://css-tricks.com/guides/) - make sites that adjust user-experience to device screen dimensions and overall capabilities, as well as user needs / preferences. The most value you will get out of [Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/), [Grid](https://css-tricks.com/snippets/css/complete-guide-grid/) and [Media-queries](https://css-tricks.com/a-complete-guide-to-css-media-queries/)
 
 [Blazor UI components](https://demos.blazorbootstrap.com/getting-started) - lots of different pre-made widgets for Blazor UI (just one of many offers) 
+
+[Unit Testing](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices) - an absolute requirement in modern enterprise development

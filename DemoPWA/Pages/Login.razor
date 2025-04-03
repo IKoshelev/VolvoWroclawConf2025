@@ -1,7 +1,21 @@
 ﻿@page "/"
+@using DemoPWA.Services
+@inject UserService UserService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Hello @UserService.UserName</PageTitle>
 
-<h1>Hello, world!</h1>
+<div>Hello @UserService.UserName</div>
 
-Welcome to your new app.
+<Button 
+    Color="ButtonColor.Primary"
+    @onclick="@UserService.ChangeUser">Change User</Button>
+
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

@@ -1,0 +1,1 @@
+AccountEndpoint=https://volvo-wroclaw-conf-2025-cosmos-db.documents.azure.com:443/;AccountKey=xxxxxxxxxxx;
