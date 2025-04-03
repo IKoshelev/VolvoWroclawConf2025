@@ -93,6 +93,10 @@ Some of these topics warrant a whole separate book, maybe even several. The list
 
 [CosmosDB](https://learn.microsoft.com/en-us/azure/cosmos-db/resource-model) - deeper dive when free-tier is no longer enough and you need to fine-tune performance
 
+[OpenID](https://openid.net/developers/how-connect-works/), [OAuth](https://auth0.com/intro-to-iam/what-is-oauth-2) - authentication and authorization 
+
+[OWASP](https://owasp.org/www-project-top-ten/) - most commonly exploited vulnerability types across all programming languages
+
 [Browser APIs](https://developer.mozilla.org/en-US/docs/Web/API) - you'll be surprised, how much stuff these days can be done with just a web page, not even PWA 
 
 [PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) - capabilities, best practices, etc...

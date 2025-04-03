@@ -25,6 +25,12 @@
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="keys\aes-iv.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="keys\aes-key.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="keys\db_connection_string.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

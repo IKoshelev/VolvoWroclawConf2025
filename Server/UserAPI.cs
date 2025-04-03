@@ -30,7 +30,7 @@ public class UserAPI(
         {
             FullName = "Jhon Smith",
             Email = "a@b.c",
-            UserId = "12345"
+            UserIdEncrypted = EncryptionHelper.Encrypt("12345")
         });
     }
 }
