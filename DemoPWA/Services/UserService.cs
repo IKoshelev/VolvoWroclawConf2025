@@ -35,7 +35,7 @@ namespace DemoPWA.Services
                 //    "bbbbbbbbbbbbbbbbbb",
                 //    DateTimeOffset.Now.AddDays(30)));
 
-                UserName = "bbbbbbbbbbbbbbbb";
+                UserName = Shared.UserAPI.Constants.USER_INFO_COOKIE;
             }
 
 
