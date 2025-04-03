@@ -91,6 +91,10 @@ Some of these topics warrant a whole separate book, maybe even several. The list
 
 [CosmosDB](https://learn.microsoft.com/en-us/azure/cosmos-db/resource-model) - deeper dive when free-tier is no longer enough and you need to fine-tune performance
 
+[Browser APIs](https://developer.mozilla.org/en-US/docs/Web/API) - you'll be surprised, how much stuff these days can be done with just a web page, not even PWA 
+
+[PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) - capabilities, best practices, etc...
+
 [Responsive design with CSS](https://css-tricks.com/guides/) - make sites that adjust user-experience to device screen dimensions and overall capabilities, as well as user needs / preferences. The most value you will get out of [Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/), [Grid](https://css-tricks.com/snippets/css/complete-guide-grid/) and [Media-queries](https://css-tricks.com/a-complete-guide-to-css-media-queries/)
 
 [Blazor UI components](https://demos.blazorbootstrap.com/getting-started) - lots of different pre-made widgets for Blazor UI (just one of many offers) 
