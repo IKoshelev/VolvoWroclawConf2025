@@ -29,12 +29,27 @@ public class BffFunctions(
         }
 
         var apiData = await apiResponse.Content.ReadFromJsonAsync<LoginResponse>();
+
         /// public cookie for information
-        CookieOptions option = new CookieOptions();
-        option.Expires = DateTime.Now.AddMonths(1);
-        option.HttpOnly = false;
-        option.Secure = true;
-        req.HttpContext.Response.Cookies.Append(Constants.USER_INFO_COOKIE, apiData.FullName, option);
+        req.HttpContext.Response.Cookies.Append(
+            Constants.USER_INFO_COOKIE, 
+            apiData.FullName, 
+            new CookieOptions()
+            {
+                Expires = DateTime.Now.AddMonths(1),
+                HttpOnly = false,
+                Secure = true,
+            });
+
+        req.HttpContext.Response.Cookies.Append(
+            Constants.USER_LOGIN_COOKIE, 
+            apiData.UserIdEncrypted, 
+            new CookieOptions()
+            {
+                Expires = DateTime.Now.AddMonths(1),
+                HttpOnly = true,
+                Secure = true,
+            });
 
         return new OkObjectResult($"Login succesffull");
     }
