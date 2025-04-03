@@ -1,11 +1,11 @@
 {
-  "name": "DemoPWA",
-  "short_name": "DemoPWA",
+  "name": "Volvo Wroclaw Conf 2025",
+  "short_name": "VolvoWroc2025",
   "id": "./",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#03173d",
+  "background_color": "#CED9E5",
+  "theme_color": "#CED9E5",
   "prefer_related_applications": false,
   "icons": [
     {
