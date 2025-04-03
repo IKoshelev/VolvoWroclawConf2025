@@ -10,13 +10,15 @@ namespace DemoPWA.API;
 
 public class BffFunctions(
     ILogger<BffFunctions> logger,
-    HttpClient httpClient)
+    IHttpClientFactory httpClientFactory)
 {
 
     [Function("login")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
+        using var httpClient = httpClientFactory.CreateClient("API");
+
         var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body);
 
         var apiResponse = await httpClient.PostAsJsonAsync("login", data);
@@ -34,7 +36,6 @@ public class BffFunctions(
         option.Secure = true;
         req.HttpContext.Response.Cookies.Append(Constants.USER_INFO_COOKIE, apiData.FullName, option);
 
-        logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Login succesffull");
+        return new OkObjectResult($"Login succesffull");
     }
 }
