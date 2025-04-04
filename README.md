@@ -1,7 +1,5 @@
 # VolvoWroclawConf2025
 
-Hosted version of the app is available https://volvo-wroclaw-conf-2025.com/ .
-
 This repository showcases how to make a web-page that can act as an application, a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app) that can be installed on desktops and mobile devices and has capabilities comparable to a native applications.
 
 Hosted demo is available at [volvo-wroclaw-conf-2025.com](https://volvo-wroclaw-conf-2025.com)
