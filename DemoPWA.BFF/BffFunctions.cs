@@ -15,7 +15,7 @@ public class BffFunctions(
 {
 
     [Function("login")]
-    public async Task<IActionResult> Run(
+    public async Task<IActionResult> Login(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
         using var httpClient = httpClientFactory.CreateClient("API");
@@ -53,5 +53,16 @@ public class BffFunctions(
             });
 
         return new OkObjectResult($"Login succesffull");
+    }
+
+    [Function("logout")]
+    public async Task<IActionResult> Logout(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+    {
+        req.HttpContext.Response.Cookies.Delete(Constants.USER_INFO_COOKIE);
+
+        req.HttpContext.Response.Cookies.Delete(Constants.USER_LOGIN_COOKIE);
+
+        return new OkObjectResult($"Logout succesffull");
     }
 }

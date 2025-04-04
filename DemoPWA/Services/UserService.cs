@@ -2,6 +2,7 @@ using BitzArt.Blazor.Cookies;
 using Microsoft.JSInterop;
 using Shared.UserAPI;
 using System.Net.Http.Json;
+using System.Web;
 
 namespace DemoPWA.Services;
 
@@ -28,7 +29,14 @@ public class UserService(
 
     private async Task<string?> GetUserNameFromCookie()
     {
-        return (await cookieService.GetAsync(Shared.UserAPI.Constants.USER_INFO_COOKIE))?.Value;
+        var cookie = await cookieService.GetAsync(Shared.UserAPI.Constants.USER_INFO_COOKIE);
+        
+        if (cookie == null)
+        {
+            return null;
+        }
+
+        return HttpUtility.UrlDecode(cookie.Value);
     }
 
     public async Task SignInWithGoogle()
@@ -46,5 +54,14 @@ public class UserService(
         {
             UserName = await GetUserNameFromCookie();
         }
+    }
+
+    public async Task Signout()
+    {
+        var httpClient = httpClientFactory.CreateClient("BFF");
+
+        await httpClient.PostAsync("/api/logout", null);
+
+        UserName = await GetUserNameFromCookie();  
     }
 }

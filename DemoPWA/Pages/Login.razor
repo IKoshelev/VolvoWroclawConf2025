@@ -5,13 +5,43 @@
 
 <PageTitle>Hello @UserService.UserName</PageTitle>
 
-<div>Hello @UserService.UserName</div>
+<div class="login-page">
+    @if (UserService.UserName != null)
+    {
+        <div>Hello @UserService.UserName</div>
 
-<Button Color="ButtonColor.Primary"
-        @onclick="@UserService.SignInWithGoogle">
-    Sign in
-</Button>
+        <br />
+
+        <Button Color="ButtonColor.Danger"
+                Outline="true"
+                @onclick="@UserService.Signout">
+            Signout
+        </Button>
+    }
+    else
+    {
+        <div>You are not sgined-in</div>
+
+        <br/>
+
+        <Button Color="ButtonColor.Secondary"
+                @onclick="@UserService.SignInWithGoogle">
+            <Icon Name="IconName.Google" /> Sign in with Google
+        </Button>
+    }
+</div>
+
 
 @code {
 
 }
+
+<style>
+    .login-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 35vh;
+    }
+</style>
