@@ -1,5 +1,7 @@
 # VolvoWroclawConf2025
 
+Hosted version of the app is available https://volvo-wroclaw-conf-2025.com/ .
+
 This repository showcases how to make a web-page that can act as an application, a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app) that can be installed on desktops and mobile devices and has capabilities comparable to a native applications.
 
 Hosted demo is available at [volvo-wroclaw-conf-2025.com](https://volvo-wroclaw-conf-2025.com)
@@ -131,6 +133,14 @@ The next part of our Server are [AdminAPI functions](https://github.com/IKoshele
 
 In recent years IDEs started supporting an `.http` file format, which allows you to make a [scratchpad of useful requests in the HTTP syntax itself](https://learn.microsoft.com/en-us/aspnet/core/test/http-files?view=aspnetcore-9.0). From experience - this ends up working a lot better then all the UI tools like Postman and I really urge you to give this a try. The [stub](https://github.com/IKoshelev/VolvoWroclawConf2025/blob/master/Server/requests.http) is already included with the project. 
 
+## Running everything together locally
+
+You can run the project in its entirety locally using [Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/emulator) or even targeting real Azure instance. [Set all 3 projects to run](https://learn.microsoft.com/en-us/visualstudio/ide/how-to-set-multiple-startup-projects?view=vs-2022) for the ultimate seamless debug experience. The only limitation of local development is that BFF can't set cookies when accessed from PWA (different ports are treated as different origin domains). You can use dev reverse proxy to access both PWA and BFF on the same port, or just intercept the response set-cookie header via [Chrome Network tab](https://developer.chrome.com/docs/devtools/network), run it through `HttpUtility.UrlDecode` and [hard-code in BFF](https://github.com/IKoshelev/VolvoWroclawConf2025/blob/09e6b46584a7a3854901aadfc81152b56d2c36d7/DemoPWA.BFF/BffFunctions.cs#L170).
+
+
+## Final word of warning
+
+PWA were made to make use of cache to work offline. Used wisely, this is a great boon. However, it can also be a great pain, since different platforms will have very different ideas, as to what should be cached and for how long. It may be a good idea for your app to avoid [HTTP caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control) completely and instead handle data storage in code via things like [Local Storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage). 
 
 ## Further in-depth reading
 
