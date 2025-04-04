@@ -80,6 +80,57 @@ Then go to "Run" -> "Messaging" section and make sure it's active for your Fireb
 
 After you're done setting up - get your [Firebase public config](https://firebase.google.com/docs/web/learn-more) (this can stored openly, since it's given to users anyway) and [Service Account key json file](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments) (this must be kept secret, it's used in your server to authorize it to your Firebase account).
 
+## Structure of the project
+
+**DemoPWA** This is the application, itself
+
+**DemoPWA.BFF** This is Backend For Frontend Serverless Function. It exist to be hosted together with PWA in the same Azure Static Web App resource. Since it's hosted on the same domain - it can interact with your app, especially its cookies, without being worried about [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS). Overall, [Backend For Frontend](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends) pattern has been gaining tracktion lately, because it helps better structure and separate responsibilities between general APIs and APIs dedicated to Frontend, especially when it comes to security tokens handling (you really don't want to mix Frontend requirements with general API). For us, BFF layer extracts encrypted user id from secure http cookie and passes it to API as a separate HTTP Header. 
+
+UI and BFF are deployed together into our Static Web App thanks to the [Github Action](https://github.com/IKoshelev/VolvoWroclawConf2025/blob/master/.github/workflows/deploy.yml) 
+
+```yaml
+      - name: Deploy to Azure SWA
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "DemoPWA"
+          api_location: "DemoPWA.BFF"
+          output_location: "wwwroot"
+```
+
+You can learn more about this deployment [here](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-blazor?WT.mc_id=blazorstaticwebapps-social-aapowell). The AZURE_STATIC_WEB_APPS_API_TOKEN is obtained from our SWA pane in the Azure Portal and stored as a [Github Secret](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions). Thanks to the use of `workflow_dispatch:` trigger, our build is triggered manually from Github Actions pane (though you could as well configure it to run on every push):
+
+[Github Actions](./readme/Github-trigger.png)
+
+**Server**
+
+This is out actual API, which will connect to the DB. It has two parts. [UserAPI](https://github.com/IKoshelev/VolvoWroclawConf2025/blob/master/Server/UserAPI.cs) contains function which are called by our BFF. These functions use `AuthorizationLevel.Anonymous` and manually decrypt use id from dedicated header. We use the simplest possible form of encryption - symmetric AES. We can afford it, because encryption and decryption is handled by the same app, we never need to give out the key, and, of course, because we are not a high-profile target ;-).  This key is stored in the [keys](https://github.com/IKoshelev/VolvoWroclawConf2025/tree/master/Server/keys) folder along with our CosmosDB connection string and Firebase key. In a commercial project, you would use Environment Variables, Managed Identities and Azure Key Vault to keep the few keys and gradually rotate them. But for a single-dev hobby project you can just store all the keys on your machine and [Publish built version of the server directly to Azure](https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-vs?pivots=isolated#publish-to-azure) . Since your Visual Studio is connected to your Microsoft account - the publish process will guide you through all your available compatible resources and even allow you to create new ones if need be.  
+
+The keys for Aes are generated like this. 
+```csharp
+var aes = System.Security.Cryptography.Aes.Create();
+aes.GenerateIV();
+aes.GenerateKey();
+File.WriteAllBytes(@".\Server\keys\aes-key.txt", aes.Key);
+File.WriteAllBytes(@".\Server\keys\aes-iv.txt", aes.IV);
+```
+
+Don't forget to exclude all key files from git change-tracking to avoid accidental commit like this:
+
+```cmd
+git update-index --assume-unchanged ./Server/keys/volvowroclawconf2025-firebase-adminsdk-fbsvc-2f3f10f5a2.json
+git update-index --assume-unchanged ./Server/keys/db_connection_string.txt
+...
+```
+
+The next part of our Server are [AdminAPI functions](https://github.com/IKoshelev/VolvoWroclawConf2025/blob/master/Server/AdminAPI.cs) . They handle administrative tasks, like making sure the DB and Containers are properly created after first deploy. You are expected to call them manually and they use function keys provided by Azure for security.  The easiest way to this is from Azure Portal itself. In your  Function App, you can click a specific function and use "Test/Run" or copy url with key from "Get function URL".
+
+![Run Azure Function](./readme/Azure-functions-run.png)
+
+In recent years IDEs started supporting an `.http` file format, which allows you to make a [scratchpad of useful requests in the HTTP syntax itself](https://learn.microsoft.com/en-us/aspnet/core/test/http-files?view=aspnetcore-9.0). From experience - this ends up working a lot better then all the UI tools like Postman and I really urge you to give this a try. The [stub](https://github.com/IKoshelev/VolvoWroclawConf2025/blob/master/Server/requests.http) is already included with the project. 
+
 
 ## Further in-depth reading
 
