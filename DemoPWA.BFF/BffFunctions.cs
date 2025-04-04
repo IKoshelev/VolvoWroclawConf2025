@@ -59,9 +59,26 @@ public class BffFunctions(
     public async Task<IActionResult> Logout(
     [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
-        req.HttpContext.Response.Cookies.Delete(Constants.USER_INFO_COOKIE);
+        /// public cookie for information
+        req.HttpContext.Response.Cookies.Append(
+            Constants.USER_INFO_COOKIE,
+            null,
+            new CookieOptions()
+            {
+                Expires = DateTime.Now.AddDays(-1),
+                HttpOnly = false,
+                Secure = true,
+            });
 
-        req.HttpContext.Response.Cookies.Delete(Constants.USER_LOGIN_COOKIE);
+        req.HttpContext.Response.Cookies.Append(
+            Constants.USER_LOGIN_COOKIE,
+            null,
+            new CookieOptions()
+            {
+                Expires = DateTime.Now.AddDays(-1),
+                HttpOnly = true,
+                Secure = true,
+            });
 
         return new OkObjectResult($"Logout succesffull");
     }
