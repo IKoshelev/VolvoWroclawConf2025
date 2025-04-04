@@ -65,7 +65,7 @@
 
         window.firebase = {};
 
-        window.firebase.signinWithGoogle = async function (output) {
+        window.firebase.signinWithGoogle = async function () {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -75,6 +75,39 @@
             return token;
         }
 
+        window.notifications = {};
+
+        window.notifications.checkPermission = async function () {
+            return Notification.permission;
+        }
+
+        window.notifications.requestPermission = async function () {
+            const permission = await Notification.requestPermission();
+
+            if (permission === "granted") {
+                const notification = new Notification("Notifications active.");
+            }
+
+            return permission;
+        }
+
+        window.notifications.getFcmToken = async function () {
+            const token = await getToken(messaging, { vapidKey: vapidPulbicKey });
+
+            return token;
+        }
+
+        const messaging = getMessaging();
+        onMessage(messaging, ({ notification }) => {
+            new Notification(notification.title, {
+                body: notification.body,
+                icon: notification.icon,
+            });
+        });
+
+        if (location.hostname === "localhost") {
+            document.cookie = 'USER_INFO_COOKIE=Localhost_User;'
+        }
       
     </script>
 

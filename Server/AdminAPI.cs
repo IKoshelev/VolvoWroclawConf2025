@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Server.DB;
+using Microsoft.Azure.Functions.Worker;
+using FirebaseAdmin.Messaging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Threading.Tasks;
 
 namespace Server;
 
@@ -22,6 +26,15 @@ public class AdminAPI(
         var res = await new CosmosDBContext().Database.EnsureCreatedAsync();
 
         return new OkObjectResult($"Ran OK, result: {res}");
+    }
+
+    [Function("send-delayed-notification-ontimer-manual")]
+    public async Task<IActionResult> SendDelayedNotificationManual(
+        [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
+    {
+        await SendOutNotifications(default);
+
+        return new OkObjectResult("");
     }
 
     [Function("create-mock-users")]
@@ -46,6 +59,57 @@ public class AdminAPI(
         await db.SaveChangesAsync();
 
         return new OkObjectResult($"Ran OK, result");
+    }
+
+    [Function("send-delayed-notification-ontimer")]
+    [FixedDelayRetry(5, "00:00:10")]
+    public async Task SendOutDelayedNotificationsOnTimer(
+        [TimerTrigger("*/15 * * * * *")] TimerInfo myTimer,
+        FunctionContext context)
+    {
+        await SendOutNotifications(default);
+    }
+
+    private async Task SendOutNotifications(CancellationToken cancellation)
+    {
+        using var db = new CosmosDBContext();
+
+        var now = DateTime.UtcNow;
+
+        var notifications = db.DelayedNotificayions.Where(x => x.TimeUTC <= now).ToArray();
+
+        var firebaseMessaging = await FirebaseUtil.GetFirebaseMessaging(cancellation);
+
+        foreach (var notification in notifications.Where(x => !string.IsNullOrEmpty(x.UserID)))
+        {
+            try
+            {
+                var user = db.Users.Where(x => x.UserId == notification.UserID).Single();
+                foreach (var fcmToken in user.FCMTokens ?? [])
+                {
+                    // Construct message
+                    var message = new Message
+                    {
+                        Token = fcmToken,
+                        Notification = new Notification
+                        {
+                            Title = "Volvo Wroclaw Conf 2025",
+                            Body = notification.Text
+                        }
+                    };
+
+                    // Send push notification
+                    string response = await firebaseMessaging.SendAsync(message);
+                }
+
+                db.DelayedNotificayions.Remove(notification);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        await db.SaveChangesAsync();
     }
 
 #if DEBUG

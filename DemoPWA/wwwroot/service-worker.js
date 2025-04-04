@@ -1,4 +1,4 @@
-const CACHE_VERSION = 1.01;
+const CACHE_VERSION = 1.02;
 
 
 // In development, always fetch from the network and do not enable offline support.

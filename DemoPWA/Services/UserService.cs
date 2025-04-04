@@ -2,6 +2,7 @@ using BitzArt.Blazor.Cookies;
 using BlazorBootstrap;
 using Microsoft.JSInterop;
 using Shared.UserAPI;
+using System.ComponentModel;
 using System.Net.Http.Json;
 using System.Web;
 
@@ -18,8 +19,15 @@ public class UserService(
     public string? UserName
     {
         get => userName;
-        set => SetProperty(ref userName, value);
+        set
+        {
+            SetProperty(ref userName, value);
+            InvokePropertyChange(nameof(IsLoggedId));
+        }
     }
+
+    public bool IsLoggedId => !String.IsNullOrWhiteSpace(UserName);
+
     public bool WasInit { get; private set; }
 
     public async Task Init()

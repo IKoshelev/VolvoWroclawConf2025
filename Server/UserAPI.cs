@@ -98,6 +98,39 @@ public class UserAPI(
         return new OkObjectResult("");
     }
 
+    [Function("request-push-notification")]
+    public async Task<IActionResult> RequestPushNotification(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+        CancellationToken cancellationToken)
+    {
+        string userId = GetUserIdFromHeader(req);
+
+        var data = await JsonSerializer.DeserializeAsync<UserNotificationRequest>(req.Body, jsonOptions);
+
+        using var db = new CosmosDBContext();
+
+        var user = db.Users.Where(x => x.UserId == userId).Single();
+
+        user.FCMTokens ??= [];
+        if (!user.FCMTokens.Contains(data.FcmToken))
+        {
+            user.FCMTokens.Add(data.FcmToken);
+        }
+
+        var offset = DateTime.UtcNow.AddSeconds(17);
+        db.DelayedNotificayions.Add(new DelayedNotfication()
+        {
+            DelayedNotficationId = Guid.NewGuid().ToString(),
+            UserID = userId,
+            TimeUTC = offset,
+            Text = data?.Text ?? "Greeting from Volvo Wroclaw Conf 2025!"
+        });
+
+        await db.SaveChangesAsync();
+
+        return new OkObjectResult("");
+    }
+
     private static string GetUserIdFromHeader(HttpRequest req)
     {
         var header = req.Headers["x-user-id-encoded"];

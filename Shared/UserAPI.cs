@@ -22,4 +22,10 @@
     {
         public string Note { get; set; }
     }
+
+    public class UserNotificationRequest
+    {
+        public string FcmToken { get; set; }
+        public string Text { get; set; }
+    }
 }

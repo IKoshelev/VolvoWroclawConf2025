@@ -1,0 +1,128 @@
+﻿@page "/notifications"
+@inject IJSRuntime jsRuntime
+@using DemoPWA.Services
+@inject UserService UserService
+@using Shared.UserAPI
+
+<PageTitle>Notifications</PageTitle>
+
+<div class="notifications-page">
+
+    @if (permissionsDenied)
+    {
+        <div>Looks like permissions have been denied. Please reset site data and try again.</div>
+    }
+
+
+    @if (!permissionsGranted)
+    {
+        <div>You need to grant notification permissions. Please press "Grant permission" confirm.</div>
+
+        <br />
+
+        <Button Color="ButtonColor.Primary"
+        Outline="true"
+        @onclick="GrantPermissions">
+            Grant permission
+        </Button>
+    } 
+    else
+    {
+        <div>Notification are active for this device.</div>
+
+        <br />
+
+        @if (UserService.IsLoggedId)
+        {
+            <Button Color="ButtonColor.Primary"
+            Outline="true"
+                    @onclick="RequestPushNotification">
+                Send me push notification in 15-30 seconds
+            </Button>
+        }
+        else
+        {
+            <div>You are not sgined-in, please go to "Login" page and sign-in to send push notifications</div>
+        }
+    }
+
+
+</div>
+
+@code {
+    private bool permissionsGranted;
+
+    private bool permissionsDenied;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RereshPermissionsStatus();
+    }
+
+    private async Task RereshPermissionsStatus()
+    {
+        var permissionsStatus = await jsRuntime.InvokeAsync<string>("notifications.checkPermission");
+
+        permissionsGranted = (permissionsStatus == "granted");
+
+        permissionsDenied = (permissionsStatus == "denied");
+    }
+
+    private async Task GrantPermissions()
+    {
+        await jsRuntime.InvokeAsync<string>("notifications.requestPermission");
+
+        await RereshPermissionsStatus();
+    }
+
+    [Inject]
+    private IHttpClientFactory httpClientFactory { get; set; }
+
+    [Inject]
+    private ModalService modalService { get; set; }
+
+    private async Task RequestPushNotification()
+    {
+        var fcMtoken = await jsRuntime.InvokeAsync<string>("notifications.getFcmToken");
+
+        var httpClient = httpClientFactory.CreateClient("BFF");
+
+        var resp = await httpClient.PostAsync("/api/request-push-notification", new StringContent(
+            System.Text.Json.JsonSerializer.Serialize(
+                new UserNotificationRequest()
+                {
+                        FcmToken = fcMtoken
+                }),
+                System.Text.Encoding.UTF8,
+                "application/json"));
+
+        if (resp.IsSuccessStatusCode)
+        {
+            await modalService.ShowAsync(new ModalOption()
+                {
+                    Title = "Success",
+                    Message = "Push requested",
+                    Type = ModalType.Success
+                });
+        }
+        else
+        {
+            await modalService.ShowAsync(new ModalOption()
+                {
+                    Title = "Something went wrong",
+                    Message = "Please try later",
+                    Type = ModalType.Danger
+                });
+        }
+    }
+}
+
+<style>
+    .notifications-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 35vh;
+    }
+</style>

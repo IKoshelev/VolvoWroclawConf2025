@@ -5,6 +5,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Shared.UserAPI;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace DemoPWA.API;
@@ -132,6 +133,34 @@ public class BffFunctions(
         return new OkObjectResult("");
     }
 
+    [Function("request-push-notification")]
+    public async Task<IActionResult> RequestPushNotification(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+        CancellationToken cancellationToken)
+    {
+        var data = await JsonSerializer.DeserializeAsync<UserNotificationRequest>(req.Body, jsonOptions);
+
+        using var httpClient = httpClientFactory.CreateClient("API");
+
+        var message = new HttpRequestMessage(HttpMethod.Post, "request-push-notification");
+
+        SetAuthHeaderFromCookie(message, req);
+
+        message.Content = new StringContent(
+            JsonSerializer.Serialize(data),
+            Encoding.UTF8,
+            "application/json");
+
+        var apiResponse = await httpClient.SendAsync(message);
+
+        if (!apiResponse.IsSuccessStatusCode)
+        {
+            return new UnauthorizedObjectResult("");
+        }
+
+        return new OkObjectResult("");
+    }
+
     public static void SetAuthHeaderFromCookie(HttpRequestMessage message, HttpRequest originalReq)
     {
         var cookieValue = originalReq.Cookies[Constants.USER_LOGIN_COOKIE];
@@ -140,6 +169,11 @@ public class BffFunctions(
         // to ease local testing
         cookieValue = "UUavlJ2tjRERTmntPJv3Nh6/xOev0FtZkE8QQ/yIer8=";
 #endif
+
+        if (string.IsNullOrWhiteSpace(cookieValue))
+        {
+            throw new ArgumentException();
+        }
 
         message.Headers.Add("x-user-id-encoded", cookieValue);
     }

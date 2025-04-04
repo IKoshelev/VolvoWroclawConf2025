@@ -6,7 +6,7 @@
 <PageTitle>Hello @UserService.UserName</PageTitle>
 
 <div class="login-page">
-    @if (UserService.UserName != null)
+    @if (UserService.IsLoggedId)
     {
         <div>Hello @UserService.UserName</div>
 

@@ -9,7 +9,16 @@ public class User
     public string? Email { get; set; }
     public DateOnly? LastSignIn { get; set; }
     public string? Note { get; set; }
+    public List<string>? FCMTokens { get; set; } = [];
 };
+
+public class DelayedNotfication
+{
+    public string DelayedNotficationId { get; set; }
+    public string UserID { get; set; }
+    public DateTime TimeUTC { get; set; }
+    public string Text { get; set; }
+}
 
 internal class CosmosDBContext: DbContext
 {
@@ -18,7 +27,8 @@ internal class CosmosDBContext: DbContext
         return System.IO.File.ReadAllText("./keys/db_connection_string.txt");
     });
 
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; } 
+    public DbSet<DelayedNotfication> DelayedNotificayions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -39,9 +49,15 @@ internal class CosmosDBContext: DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasManualThroughput(1000);
-            modelBuilder.Entity<User>()
-                .ToContainer(nameof(User))
-                .HasPartitionKey(x => x.UserId)
-                .HasKey(x => x.UserId);
+
+        modelBuilder.Entity<User>()
+            .ToContainer(nameof(User))
+            .HasPartitionKey(x => x.UserId)
+            .HasKey(x => x.UserId);
+
+        modelBuilder.Entity<DelayedNotfication>()
+            .ToContainer(nameof(DelayedNotfication))
+            .HasPartitionKey(x => x.DelayedNotficationId)
+            .HasKey(x => x.DelayedNotficationId);
     }
 }

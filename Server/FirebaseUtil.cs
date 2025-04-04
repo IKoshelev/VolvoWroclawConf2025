@@ -1,5 +1,6 @@
 ﻿using FirebaseAdmin;
 using FirebaseAdmin.Auth;
+using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 
 namespace Server;
@@ -12,6 +13,12 @@ internal static class FirebaseUtil
     {
         await GetFirebaseApp(cancellationToken);
         return FirebaseAuth.DefaultInstance;
+    }
+
+    public async static Task<FirebaseMessaging> GetFirebaseMessaging(CancellationToken cancellationToken)
+    {
+        await GetFirebaseApp(cancellationToken);
+        return FirebaseMessaging.DefaultInstance;
     }
 
     public async static Task<FirebaseApp> GetFirebaseApp(
