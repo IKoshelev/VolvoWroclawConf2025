@@ -10,7 +10,8 @@ namespace DemoPWA.API;
 
 public class BffFunctions(
     ILogger<BffFunctions> logger,
-    IHttpClientFactory httpClientFactory)
+    IHttpClientFactory httpClientFactory,
+    JsonSerializerOptions jsonOptions)
 {
 
     [Function("login")]
@@ -19,7 +20,7 @@ public class BffFunctions(
     {
         using var httpClient = httpClientFactory.CreateClient("API");
 
-        var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body);
+        var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body, jsonOptions);
 
         var apiResponse = await httpClient.PostAsJsonAsync("login", data);
 
@@ -28,7 +29,7 @@ public class BffFunctions(
             return new UnauthorizedObjectResult("");
         }
 
-        var apiData = await apiResponse.Content.ReadFromJsonAsync<LoginResponse>();
+        var apiData = await apiResponse.Content.ReadFromJsonAsync<LoginResponse>(jsonOptions);
 
         /// public cookie for information
         req.HttpContext.Response.Cookies.Append(

@@ -16,7 +16,8 @@ namespace Server;
 /// </summary>
 /// <param name="logger"></param>
 public class UserAPI(
-    ILogger<UserAPI> logger)
+    ILogger<UserAPI> logger,
+    JsonSerializerOptions jsonOptions)
 {
 
     [Function("login")]
@@ -24,7 +25,7 @@ public class UserAPI(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
         CancellationToken cancellationToken)
     {
-        var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body);
+        var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body, jsonOptions);
 
         var firebase = await FirebaseUtil.GetFirebaseAuth(cancellationToken);
 

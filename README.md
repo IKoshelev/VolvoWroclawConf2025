@@ -74,6 +74,8 @@ Stat by [registering a free account](https://firebase.google.com/) and, [creatin
 
 ![Firebase sign-in providers](./readme/Firebase-sign-in-poriders.png)
 
+You will also have to go to "Settings" -> "Authorized domains" and add all domains that your app will be using.
+
 Then go to "Run" -> "Messaging" section and make sure it's active for your Firebase App. For messaging you will also have to [create a VAPID key pair](https://firebase.google.com/docs/cloud-messaging/js/client#configure_web_credentials_in_your_app). Its public part will be used by our WPA, private part is not used since we will be using Service Account (next paragraph). 
 
 After you're done setting up - get your [Firebase public config](https://firebase.google.com/docs/web/learn-more) (this can stored openly, since it's given to users anyway) and [Service Account key json file](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments) (this must be kept secret, it's used in your server to authorize it to your Firebase account).
