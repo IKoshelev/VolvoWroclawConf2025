@@ -73,14 +73,12 @@ public class UserAPI(
 
         var user = db.Users.SingleOrDefault(x => x.UserId == userId);
 
-        return new JsonResult(new GetNoreResponse()
-        {
-            Note = user.Note
-        });
+        return new OkObjectResult(user.Note ?? "");
     }
 
     private static string GetUserIdFromHeader(HttpRequest req)
     {
-        return EncryptionHelper.Decrypt(req.Headers["x-user-id-encided"]);
+        var header = req.Headers["x-user-id-encoded"];
+        return EncryptionHelper.Decrypt(header);
     }
 }

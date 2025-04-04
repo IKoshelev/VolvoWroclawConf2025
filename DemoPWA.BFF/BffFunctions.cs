@@ -111,6 +111,6 @@ public class BffFunctions(
     {
         var cookieValue = originalReq.Cookies[Constants.USER_LOGIN_COOKIE];
 
-        message.Headers.Add("x-user-id-encided", cookieValue);
+        message.Headers.Add("x-user-id-encoded", cookieValue);
     }
 }
