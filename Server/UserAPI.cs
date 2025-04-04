@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Server.DB;
 using Shared.UserAPI;
 using System.Text.Json;
 
@@ -31,8 +32,27 @@ public class UserAPI(
 
         FirebaseToken decodedToken = await firebase.VerifyIdTokenAsync(data.Token);
         string uid = decodedToken.Uid;
+        var userName = decodedToken.Claims.GetValueOrDefault("name")?.ToString();
+        var userEmail = decodedToken.Claims.GetValueOrDefault("email")?.ToString();
 
-        // todo make sure user exists in db
+        using var db = new CosmosDBContext();
+
+        var user = db.Users.SingleOrDefault(x => x.UserId == uid);
+
+        if (user == null)
+        {
+            user = new User()
+            {
+                UserId = uid,
+                FullName = userName,
+                Email = userEmail
+            };
+            db.Users.Add(user);
+        }
+
+        user.LastSignIn = DateOnly.FromDateTime(DateTime.Now);
+
+        await db.SaveChangesAsync();
 
         return new JsonResult(new LoginResponse()
         {
