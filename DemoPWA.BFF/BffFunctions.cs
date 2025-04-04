@@ -1,3 +1,4 @@
+using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -65,7 +66,7 @@ public class BffFunctions(
             "",
             new CookieOptions()
             {
-                Expires = DateTime.Now.AddDays(-1),
+                Expires = DateTime.Now.AddMinutes(5), // expired cookies stripped out of response?
                 HttpOnly = false,
                 Secure = true,
             });
@@ -75,11 +76,41 @@ public class BffFunctions(
             "",
             new CookieOptions()
             {
-                Expires = DateTime.Now.AddDays(-1),
+                Expires = DateTime.Now.AddMinutes(5),
                 HttpOnly = true,
                 Secure = true,
             });
 
         return new OkObjectResult($"Logout succesffull");
+    }
+
+    [Function("get-note")]
+    public async Task<IActionResult> GetNote(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+    {
+        using var httpClient = httpClientFactory.CreateClient("API");
+
+        var message = new HttpRequestMessage(HttpMethod.Get, "get-note");
+
+        SetAuthCookieOnRequest(message, req);
+
+        var apiResponse = await httpClient.SendAsync(message);
+
+        if (!apiResponse.IsSuccessStatusCode)
+        {
+            return new UnauthorizedObjectResult("");
+        }
+
+        var apiData = await apiResponse.Content.ReadAsStringAsync();
+
+        return new OkObjectResult(apiData);
+    }
+
+
+    public static void SetAuthCookieOnRequest(HttpRequestMessage message, HttpRequest originalReq)
+    {
+        var cookieValue = originalReq.Cookies[Constants.USER_LOGIN_COOKIE];
+
+        message.Headers.Add("Cookie", $"{Constants.USER_LOGIN_COOKIE}={cookieValue}");
     }
 }

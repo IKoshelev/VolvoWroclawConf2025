@@ -70,9 +70,14 @@ public class UserService(
     {
         var httpClient = httpClientFactory.CreateClient("BFF");
 
-        var note = await httpClient.GetFromJsonAsync<string>("/api/get-note");
+        var resp = await httpClient.GetAsync("/api/get-note");
 
-        return note;
+        if (resp.IsSuccessStatusCode)
+        {
+            return await resp.Content.ReadAsStringAsync();
+        }
+
+        return null;
     }
 
     public async Task<bool> SetNote(string note)
