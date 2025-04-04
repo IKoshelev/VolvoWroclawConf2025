@@ -48,4 +48,15 @@ public class AdminAPI(
         return new OkObjectResult($"Ran OK, result");
     }
 
+#if DEBUG
+    [Function("encrypt-user-id")]
+    public async Task<IActionResult> EncryptUserId(
+        [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
+    {
+        using var stream = new StreamReader(req.Body);
+        var note = await stream.ReadToEndAsync();
+        return new OkObjectResult(EncryptionHelper.Encrypt(note));
+    }
+#endif
+
 }
