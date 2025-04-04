@@ -37,7 +37,7 @@ public class UserAPI(
 
         using var db = new CosmosDBContext();
 
-        var user = db.Users.SingleOrDefault(x => x.UserId == uid);
+        var user = db.Users.Where(x => x.UserId == uid).SingleOrDefault();
 
         if (user == null)
         {
@@ -71,14 +71,43 @@ public class UserAPI(
 
         using var db = new CosmosDBContext();
 
-        var user = db.Users.SingleOrDefault(x => x.UserId == userId);
+        var user = db.Users.Where(x => x.UserId == userId).Single();
 
         return new OkObjectResult(user.Note ?? "");
+    }
+
+
+    [Function("set-note")]
+    public async Task<IActionResult> SetNote(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+    CancellationToken cancellationToken)
+    {
+        string userId = GetUserIdFromHeader(req);
+
+        using var stream = new StreamReader(req.Body);
+        var note = await stream.ReadToEndAsync();
+
+        using var db = new CosmosDBContext();
+
+        var user = db.Users.Where(x => x.UserId == userId).Single();
+
+        user.Note = note;
+
+        await db.SaveChangesAsync();
+
+        return new OkObjectResult("");
     }
 
     private static string GetUserIdFromHeader(HttpRequest req)
     {
         var header = req.Headers["x-user-id-encoded"];
-        return EncryptionHelper.Decrypt(header);
+        var user = EncryptionHelper.Decrypt(header);
+
+        if (string.IsNullOrWhiteSpace(user))
+        {
+            throw new ArgumentException();
+        }
+
+        return user;
     }
 }

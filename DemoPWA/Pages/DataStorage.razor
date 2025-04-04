@@ -24,9 +24,11 @@
 
         </TextAreaInput>
 
+        <br />
+
         <Button Color="ButtonColor.Primary"
-        Outline="true"
-        @onclick="async () => UserService.SetNote(UserNote)">
+            Outline="true"
+            @onclick="SaveNote">
             Save
         </Button>
     }

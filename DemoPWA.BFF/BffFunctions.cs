@@ -106,10 +106,40 @@ public class BffFunctions(
         return new OkObjectResult(apiData);
     }
 
+    [Function("set-note")]
+    public async Task<IActionResult> SetNote(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+        CancellationToken cancellationToken)
+    {
+        using var stream = new StreamReader(req.Body);
+        var note = await stream.ReadToEndAsync();
+
+        using var httpClient = httpClientFactory.CreateClient("API");
+
+        var message = new HttpRequestMessage(HttpMethod.Post, "set-note");
+
+        SetAuthHeaderFromCookie(message, req);
+
+        message.Content = new StringContent(note);
+
+        var apiResponse = await httpClient.SendAsync(message);
+
+        if (!apiResponse.IsSuccessStatusCode)
+        {
+            return new UnauthorizedObjectResult("");
+        }
+
+        return new OkObjectResult("");
+    }
 
     public static void SetAuthHeaderFromCookie(HttpRequestMessage message, HttpRequest originalReq)
     {
         var cookieValue = originalReq.Cookies[Constants.USER_LOGIN_COOKIE];
+
+#if DEBUG
+        // to ease local testing
+        cookieValue = "UUavlJ2tjRERTmntPJv3Nh6/xOev0FtZkE8QQ/yIer8=";
+#endif
 
         message.Headers.Add("x-user-id-encoded", cookieValue);
     }

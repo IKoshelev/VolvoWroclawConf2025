@@ -23,4 +23,29 @@ public class AdminAPI(
 
         return new OkObjectResult($"Ran OK, result: {res}");
     }
+
+    [Function("create-mock-users")]
+    public async Task<IActionResult> CreateMockUsers(
+    [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
+    {
+        using var db = new CosmosDBContext();
+
+        var seed = Random.Shared.Next();
+
+        for (int i = 1; i < 10; i++)
+        {
+            var user = new User()
+            {
+                UserId = Guid.NewGuid().ToString(),
+                FullName = $"User {seed + i}",
+                Email = $"User{seed + i}@fakeemai72346346463.com"
+            };
+            db.Users.Add(user);
+        }
+
+        await db.SaveChangesAsync();
+
+        return new OkObjectResult($"Ran OK, result");
+    }
+
 }
