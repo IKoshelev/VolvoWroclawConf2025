@@ -1,45 +1,50 @@
-//using BitzArt.Blazor.Cookies;
+using BitzArt.Blazor.Cookies;
+using Microsoft.JSInterop;
+using Shared.UserAPI;
+using System.Net.Http.Json;
 
-namespace DemoPWA.Services
+namespace DemoPWA.Services;
+
+public class UserService(
+    ICookieService cookieService,
+    IJSRuntime jsRuntime,
+    IHttpClientFactory httpClientFactory
+    ) : NotifyPropertyChangedBase, INeedInit
 {
-    public class UserService(
-        //ICookieService cookieService
-        ): NotifyPropertyChangedBase, INeedInit
+    private string? userName = null;
+
+    public string? UserName
     {
-        private string? userName = null;
+        get => userName;
+        set => SetProperty(ref userName, value);
+    }
+    public bool WasInit { get; private set; }
 
-        public string? UserName
+    public async Task Init()
+    {
+        UserName = await GetUserNameFromCookie();
+        WasInit = true;
+    }
+
+    private async Task<string?> GetUserNameFromCookie()
+    {
+        return (await cookieService.GetAsync(Shared.UserAPI.Constants.USER_INFO_COOKIE))?.Value;
+    }
+
+    public async Task SignInWithGoogle()
+    {
+        var httpClient = httpClientFactory.CreateClient("BFF");
+
+        var googleIdToken = await jsRuntime.InvokeAsync<string>("firebase.signinWithGoogle");
+
+        var bffResponse = await httpClient.PostAsJsonAsync("/api/login", new LoginRequest()
         {
-            get => userName;
-            set => SetProperty(ref userName, value);
-        }
-        public bool WasInit { get; private set; }
+            Token = googleIdToken,
+        });
 
-
-        public async Task Init()
+        if (bffResponse.IsSuccessStatusCode)
         {
-            //UserName = (await cookieService.GetAsync(Shared.UserAPI.Constants.USER_INFO_COOKIE))?.Value;
-            WasInit = true;
+            UserName = await GetUserNameFromCookie();
         }
-
-        public async Task ChangeUser()
-        {
-            if (UserName != null)
-            {
-                UserName = null;
-            } 
-            else
-            {
-                //await cookieService.SetAsync(new Cookie(
-                //    Shared.UserAPI.Constants.USER_INFO_COOKIE,
-                //    "bbbbbbbbbbbbbbbbbb",
-                //    DateTimeOffset.Now.AddDays(30)));
-
-                UserName = Shared.UserAPI.Constants.USER_INFO_COOKIE;
-            }
-
-
-        }
-
     }
 }

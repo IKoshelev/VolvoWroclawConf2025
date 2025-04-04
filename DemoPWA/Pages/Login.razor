@@ -1,21 +1,17 @@
 ﻿@page "/"
 @using DemoPWA.Services
 @inject UserService UserService
+@inject IJSRuntime jsRuntime
 
 <PageTitle>Hello @UserService.UserName</PageTitle>
 
 <div>Hello @UserService.UserName</div>
 
-<Button 
-    Color="ButtonColor.Primary"
-    @onclick="@UserService.ChangeUser">Change User</Button>
-
+<Button Color="ButtonColor.Primary"
+        @onclick="@UserService.SignInWithGoogle">
+    Sign in
+</Button>
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
 }

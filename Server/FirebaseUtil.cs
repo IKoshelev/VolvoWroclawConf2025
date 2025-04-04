@@ -1,11 +1,18 @@
 ﻿using FirebaseAdmin;
+using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 
 namespace Server;
 
 internal static class FirebaseUtil
 {
-    private static readonly SemaphoreSlim applicationInitLock = new(0);
+    private static readonly SemaphoreSlim applicationInitLock = new(1);
+
+    public async static Task<FirebaseAuth> GetFirebaseAuth(CancellationToken cancellationToken)
+    {
+        await GetFirebaseApp(cancellationToken);
+        return FirebaseAuth.DefaultInstance;
+    }
 
     public async static Task<FirebaseApp> GetFirebaseApp(
         CancellationToken cancellationToken)

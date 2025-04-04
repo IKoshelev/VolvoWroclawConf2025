@@ -1,3 +1,4 @@
+using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,17 +21,23 @@ public class UserAPI(
 
     [Function("login")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+        CancellationToken cancellationToken)
     {
         var data = await JsonSerializer.DeserializeAsync<LoginRequest>(req.Body);
 
-        // todo verify token
+        var firebase = await FirebaseUtil.GetFirebaseAuth(cancellationToken);
+
+        FirebaseToken decodedToken = await firebase.VerifyIdTokenAsync(data.Token);
+        string uid = decodedToken.Uid;
+
+        // todo make sure user exists in db
 
         return new JsonResult(new LoginResponse()
         {
-            FullName = "Jhon Smith",
-            Email = "a@b.c",
-            UserIdEncrypted = EncryptionHelper.Encrypt("12345")
+            FullName = decodedToken.Claims.GetValueOrDefault("name")?.ToString(),
+            Email = decodedToken.Claims.GetValueOrDefault("email")?.ToString(),
+            UserIdEncrypted = EncryptionHelper.Encrypt(uid)
         });
     }
 }

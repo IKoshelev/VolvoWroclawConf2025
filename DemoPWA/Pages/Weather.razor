@@ -42,13 +42,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Http.PostAsJsonAsync("/api/login", new LoginRequest()
-        {
-            Token = "",
-            Name = "",
-            Email = ""
 
-        });
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 

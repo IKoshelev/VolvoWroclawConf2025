@@ -1,4 +1,4 @@
-//using BitzArt.Blazor.Cookies;
+using BitzArt.Blazor.Cookies;
 using DemoPWA.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -13,11 +13,16 @@ namespace DemoPWA
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+            builder.Services.AddHttpClient("BFF",x =>
+            {
+                x.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
 
             builder.Services.AddBlazorBootstrap();
 
-            //builder.AddBlazorCookies(ServiceLifetime.Singleton);
+            builder.AddBlazorCookies(ServiceLifetime.Singleton);
 
             builder.Services.AddSingleton<UserService>();
             builder.Services.AddSingleton<INeedInit>(x => x.GetRequiredService<UserService>());
