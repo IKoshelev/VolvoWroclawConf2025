@@ -62,7 +62,7 @@ public class BffFunctions(
         /// public cookie for information
         req.HttpContext.Response.Cookies.Append(
             Constants.USER_INFO_COOKIE,
-            null,
+            "",
             new CookieOptions()
             {
                 Expires = DateTime.Now.AddDays(-1),
@@ -72,7 +72,7 @@ public class BffFunctions(
 
         req.HttpContext.Response.Cookies.Append(
             Constants.USER_LOGIN_COOKIE,
-            null,
+            "",
             new CookieOptions()
             {
                 Expires = DateTime.Now.AddDays(-1),
