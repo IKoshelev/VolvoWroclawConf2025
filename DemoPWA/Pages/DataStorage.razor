@@ -1,0 +1,82 @@
+﻿@page "/data-storage"
+@using DemoPWA.Services
+@inject UserService UserService
+@using Shared.UserAPI
+@inject ModalService modalService
+
+
+
+<div class="data-storage-page">
+    @if (UserService.UserName != null)
+    {
+        <div>Hello @UserService.UserName</div>
+
+        <div>
+            This note is saved on the backed in the cloud
+        </div>
+
+        <br />
+
+        <TextAreaInput
+        Placeholder="write something here and click 'save'"
+        Value="@UserNote"
+        >
+
+        </TextAreaInput>
+
+        <Button Color="ButtonColor.Primary"
+        Outline="true"
+        @onclick="async () => UserService.SetNote(UserNote)">
+            Save
+        </Button>
+    }
+    else
+    {
+        <div>You are not sgined-in, please  go to "Login" page and sign-in</div>
+    }
+</div>
+
+
+@code {
+    private string UserNote;
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserNote = await UserService.GetNote();
+    }
+
+    private async Task SaveNote()
+    {
+        var result = await UserService.SetNote(UserNote);
+
+        if (result)
+        {
+            await modalService.ShowAsync(new ModalOption()
+                {
+                    Title = "Success",
+                    Message = "Note saved",
+                    Type = ModalType.Success
+                });
+        }
+        else
+        {
+            await modalService.ShowAsync(new ModalOption()
+             {
+                 Title = "Something went wrong",
+                 Message = "Please try later",
+                 Type = ModalType.Danger
+             });
+        }
+    }
+
+}
+
+<style>
+    .data-storage-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 35vh;
+    }
+</style>

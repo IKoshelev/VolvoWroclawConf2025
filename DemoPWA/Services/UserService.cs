@@ -1,4 +1,5 @@
 using BitzArt.Blazor.Cookies;
+using BlazorBootstrap;
 using Microsoft.JSInterop;
 using Shared.UserAPI;
 using System.Net.Http.Json;
@@ -63,5 +64,23 @@ public class UserService(
         await httpClient.PostAsync("/api/logout", null);
 
         UserName = await GetUserNameFromCookie();  
+    }
+
+    public async Task<String> GetNote()
+    {
+        var httpClient = httpClientFactory.CreateClient("BFF");
+
+        var note = await httpClient.GetFromJsonAsync<string>("/api/get-note");
+
+        return note;
+    }
+
+    public async Task<bool> SetNote(string note)
+    {
+        var httpClient = httpClientFactory.CreateClient("BFF");
+
+        var resp = await httpClient.PostAsync("/api/set-note", new StringContent(note));
+
+        return resp.IsSuccessStatusCode;
     }
 }
