@@ -17,4 +17,9 @@
         public string FullName { get; set; }
         public string Email { get; set; }
     }
+
+    public class GetNoreResponse
+    {
+        public string Note { get; set; }
+    }
 }

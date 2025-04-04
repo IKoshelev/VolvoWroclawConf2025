@@ -92,7 +92,7 @@ public class BffFunctions(
 
         var message = new HttpRequestMessage(HttpMethod.Get, "get-note");
 
-        SetAuthCookieOnRequest(message, req);
+        SetAuthHeaderFromCookie(message, req);
 
         var apiResponse = await httpClient.SendAsync(message);
 
@@ -107,10 +107,10 @@ public class BffFunctions(
     }
 
 
-    public static void SetAuthCookieOnRequest(HttpRequestMessage message, HttpRequest originalReq)
+    public static void SetAuthHeaderFromCookie(HttpRequestMessage message, HttpRequest originalReq)
     {
         var cookieValue = originalReq.Cookies[Constants.USER_LOGIN_COOKIE];
 
-        message.Headers.Add("Cookie", $"{Constants.USER_LOGIN_COOKIE}={cookieValue}");
+        message.Headers.Add("x-user-id-encided", cookieValue);
     }
 }

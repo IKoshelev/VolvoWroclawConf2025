@@ -61,4 +61,26 @@ public class UserAPI(
             UserIdEncrypted = EncryptionHelper.Encrypt(uid)
         });
     }
+
+    [Function("get-note")]
+    public async Task<IActionResult> GetNote(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
+    CancellationToken cancellationToken)
+    {
+        string userId = GetUserIdFromHeader(req);
+
+        using var db = new CosmosDBContext();
+
+        var user = db.Users.SingleOrDefault(x => x.UserId == userId);
+
+        return new JsonResult(new GetNoreResponse()
+        {
+            Note = user.Note
+        });
+    }
+
+    private static string GetUserIdFromHeader(HttpRequest req)
+    {
+        return EncryptionHelper.Decrypt(req.Headers["x-user-id-encided"]);
+    }
 }

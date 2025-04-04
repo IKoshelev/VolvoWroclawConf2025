@@ -32,7 +32,7 @@ public class UserService(
     {
         var cookie = await cookieService.GetAsync(Shared.UserAPI.Constants.USER_INFO_COOKIE);
         
-        if (cookie == null)
+        if (string.IsNullOrWhiteSpace(cookie?.Value))
         {
             return null;
         }
