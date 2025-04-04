@@ -12,14 +12,14 @@
         <div>Hello @UserService.UserName</div>
 
         <div>
-            This note is saved on the backed in the cloud
+            This note is saved in the cloud
         </div>
 
         <br />
 
         <TextAreaInput
-        Placeholder="write something here and click 'save'"
-        Value="@UserNote"
+            Placeholder="write something here and click 'save'"
+                @bind-Value="@UserNote"
         >
 
         </TextAreaInput>
@@ -42,7 +42,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        UserNote = await UserService.GetNote();
+        UserNote = await UserService.GetNote() ?? "";
     }
 
     private async Task SaveNote()
