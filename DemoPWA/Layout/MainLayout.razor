@@ -11,7 +11,12 @@
     <main>
 
         <div class="top-row px-4">
-            <a href="https://github.com/IKoshelev/VolvoWroclawConf2025" target="_blank">Github</a>
+            <a href="https://github.com/IKoshelev/VolvoWroclawConf2025" target="_blank">Github</a> &nbsp;
+            <Button 
+                    Color="ButtonColor.Primary" 
+                    Size="ButtonSize.Small"
+                    @onclick='async () => jsRuntime.InvokeVoidAsync("showInstallInstcutions")'>Install</Button>
+            
         </div>
 
         <article class="content px-4">
