@@ -8,11 +8,6 @@
 
 <div class="notifications-page">
 
-    @if (isIOs && isSafari)
-    {
-        <div>Looks like you are using an iOS device. If so please use native Safari browser.</div>
-    }
-
     @if (permissionsDenied)
     {
         <div>Looks like permissions have been denied. Please reset site data and try again.</div>
@@ -59,10 +54,6 @@
 
     private bool permissionsDenied;
 
-    private bool isIOs;
-
-    private bool isSafari;
-
     private string error;
 
     protected override async Task OnInitializedAsync()
@@ -90,10 +81,6 @@
         permissionsGranted = (permissionsStatus == "granted");
 
         permissionsDenied = (permissionsStatus == "denied");
-
-        isIOs = await jsRuntime.InvokeAsync<bool>("notifications.isIOs");
-
-        isSafari = await jsRuntime.InvokeAsync<bool>("notifications.isSafari");
     }
 
     private async Task GrantPermissions()

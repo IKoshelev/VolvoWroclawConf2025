@@ -1,21 +1,33 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime jsRuntime
 
 <div class="bb-page">
 
     <Sidebar @ref="sidebar"
-             ImageSrc="./Volvo-Iron-Mark-Black.svg"
-             Title="Volvo Wroclaw Conf 2025"
-             DataProvider="SidebarDataProvider" />
+    ImageSrc="./Volvo-Iron-Mark-Black.svg"
+    Title="Volvo Wroclaw Conf 2025"
+    DataProvider="SidebarDataProvider" />
 
     <main>
 
-         <div class="top-row px-4">
+        <div class="top-row px-4">
             <a href="https://github.com/IKoshelev/VolvoWroclawConf2025" target="_blank">Github</a>
         </div>
 
         <article class="content px-4">
             <div class="py-2">@Body</div>
         </article>
+
+        @if (isIOs && isSafari)
+        {
+            <div class="ios-warning-footer">
+                <div>Looks like you are using an iOS device.
+                <br /> If so, please use native Safari browser.
+                <br /> To install the PWA locally in Safari use
+                <br />  "Share" -> "Add to Home Screen"
+            </div>
+        </div>
+        }
     </main>
 
 </div>
@@ -25,6 +37,17 @@
 @code {
     Sidebar sidebar;
     IEnumerable<NavItem> navItems;
+
+    private bool isIOs;
+
+    private bool isSafari;
+
+    private async Task RereshPermissionsStatus()
+    {
+        isIOs = await jsRuntime.InvokeAsync<bool>("notifications.isIOs");
+
+        isSafari = await jsRuntime.InvokeAsync<bool>("notifications.isSafari");
+    }
 
     private async Task<SidebarDataProviderResult> SidebarDataProvider(SidebarDataProviderRequest request)
     {
@@ -70,4 +93,16 @@
         --bb-sidebar-nav-item-background-hover-color: rgba(var(--bb-sidebar-nav-item-text-active-color-rgb),0.08);
         --bb-sidebar-nav-item-group-background-color: rgba(var(--bb-sidebar-nav-item-text-active-color-rgb),0.08);
     }
+
+    .ios-warning-footer
+    {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding-bottom: 1em;
+        text-align: center;
+        background-color: lightpink;
+    }
+
 </style>
