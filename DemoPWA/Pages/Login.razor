@@ -2,6 +2,7 @@
 @using DemoPWA.Services
 @inject UserService UserService
 @inject IJSRuntime jsRuntime
+@inject NavigationManager MyNavigationManager
 
 <PageTitle>Hello @UserService.UserName</PageTitle>
 
@@ -14,8 +15,8 @@
         <br />
 
         <Button Color="ButtonColor.Danger"
-                Outline="true"
-                @onclick="@UserService.Signout">
+        Outline="true"
+        @onclick="@UserService.Signout">
             Signout
         </Button>
     }
@@ -26,9 +27,18 @@
         <br/>
 
         <Button Color="ButtonColor.Secondary"
-                @onclick="@UserService.SignInWithGoogle">
+        @onclick="@UserService.SignInWithGoogle">
             <Icon Name="IconName.Google" /> Sign in with Google
         </Button>
+
+        @if (MyNavigationManager.BaseUri.Contains("/localhost"))
+        {
+            <br/>
+            <Button Color="ButtonColor.Secondary"
+                    @onclick='SignInWithMock'>
+                Use BffFunctions.MockLogin
+            </Button>
+        }
     }
 
     <br/>
@@ -40,7 +50,12 @@
 
 
 @code {
-
+    private async Task SignInWithMock()
+    {
+        #if DEBUG
+        await UserService.SignInWithMock();
+        #endif
+    }
 }
 
 <style>

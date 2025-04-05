@@ -57,6 +57,36 @@ public class BffFunctions(
         return new OkObjectResult($"Login succesffull");
     }
 
+#if DEBUG
+    [Function("mock-login")]
+    public async Task<IActionResult> MockLogin(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+    {
+        req.HttpContext.Response.Cookies.Append(
+            Constants.USER_INFO_COOKIE,
+            "Localhost_User",
+            new CookieOptions()
+            {
+                Expires = DateTime.Now.AddMonths(1),
+                HttpOnly = false,
+                Secure = true,
+            });
+
+        req.HttpContext.Response.Cookies.Append(
+            Constants.USER_LOGIN_COOKIE,
+            // use AdminAPI.EncryptUserId to get value
+            "UUavlJ2tjRERTmntPJv3Nh6/xOev0FtZkE8QQ/yIer8=",
+            new CookieOptions()
+            {
+                Expires = DateTime.Now.AddMonths(1),
+                HttpOnly = true,
+                Secure = true,
+            });
+
+        return new OkObjectResult($"Login succesffull");
+    }
+#endif
+
     [Function("logout")]
     public async Task<IActionResult> Logout(
     [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
@@ -164,11 +194,6 @@ public class BffFunctions(
     public static void SetAuthHeaderFromCookie(HttpRequestMessage message, HttpRequest originalReq)
     {
         var cookieValue = originalReq.Cookies[Constants.USER_LOGIN_COOKIE];
-
-#if DEBUG
-        // to ease local testing
-        cookieValue = "UUavlJ2tjRERTmntPJv3Nh6/xOev0FtZkE8QQ/yIer8=";
-#endif
 
         if (string.IsNullOrWhiteSpace(cookieValue))
         {

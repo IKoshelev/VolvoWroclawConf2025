@@ -17,11 +17,7 @@ namespace DemoPWA
 
             builder.Services.AddHttpClient("BFF",x =>
             {
-#if DEBUG
-                var baseUrl = "http://localhost:7086/";
-#else
                 var baseUrl = builder.HostEnvironment.BaseAddress;
-#endif
 
                 x.BaseAddress = new Uri(baseUrl);
             });

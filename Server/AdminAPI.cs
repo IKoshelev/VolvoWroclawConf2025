@@ -61,6 +61,7 @@ public class AdminAPI(
         return new OkObjectResult($"Ran OK, result");
     }
 
+#if RELEASE
     [Function("send-delayed-notification-ontimer")]
     [FixedDelayRetry(5, "00:00:10")]
     public async Task SendOutDelayedNotificationsOnTimer(
@@ -69,6 +70,7 @@ public class AdminAPI(
     {
         await SendOutNotifications(default);
     }
+#endif
 
     private async Task SendOutNotifications(CancellationToken cancellation)
     {

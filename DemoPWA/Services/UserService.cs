@@ -65,6 +65,20 @@ public class UserService(
         }
     }
 
+#if DEBUG
+    public async Task SignInWithMock()
+    {
+        var httpClient = httpClientFactory.CreateClient("BFF");
+
+        var bffResponse = await httpClient.PostAsync("/api/mock-login", null);
+
+        if (bffResponse.IsSuccessStatusCode)
+        {
+            UserName = await GetUserNameFromCookie();
+        }
+    }
+#endif
+
     public async Task Signout()
     {
         var httpClient = httpClientFactory.CreateClient("BFF");
