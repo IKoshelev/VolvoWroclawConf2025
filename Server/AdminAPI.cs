@@ -85,6 +85,9 @@ public class AdminAPI(
             try
             {
                 var user = db.Users.Where(x => x.UserId == notification.UserID).Single();
+
+                // TODO figure out was to cleanup old unused FCM tokens.
+                // API call to Firebase? Or maybe just expiration timestamp?
                 foreach (var fcmToken in user.FCMTokens ?? [])
                 {
                     var message = new Message
