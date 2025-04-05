@@ -102,7 +102,7 @@ UI and BFF are deployed together into our Static Web App thanks to the [Github A
 
 You can learn more about this deployment [here](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-blazor?WT.mc_id=blazorstaticwebapps-social-aapowell). The AZURE_STATIC_WEB_APPS_API_TOKEN is obtained from our SWA pane in the Azure Portal and stored as a [Github Secret](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions). Thanks to the use of `workflow_dispatch:` trigger, our build is triggered manually from Github Actions pane (though you could as well configure it to run on every push):
 
-[Github Actions](./readme/Github-trigger.png)
+![Github Actions](./readme/Github-trigger.png)
 
 **Server**
 
