@@ -87,7 +87,6 @@ public class AdminAPI(
                 var user = db.Users.Where(x => x.UserId == notification.UserID).Single();
                 foreach (var fcmToken in user.FCMTokens ?? [])
                 {
-                    // Construct message
                     var message = new Message
                     {
                         Token = fcmToken,
@@ -98,15 +97,14 @@ public class AdminAPI(
                         }
                     };
 
-                    // Send push notification
                     string response = await firebaseMessaging.SendAsync(message);
                 }
-
-                db.DelayedNotificayions.Remove(notification);
             }
             catch (Exception ex)
             {
             }
+
+            db.DelayedNotificayions.Remove(notification);
         }
 
         await db.SaveChangesAsync();
