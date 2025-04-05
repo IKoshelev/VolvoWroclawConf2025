@@ -8,6 +8,11 @@
 
 <div class="notifications-page">
 
+    @if (isIOs && isSafari)
+    {
+        <div>Looks like you are using an iOS device. If so please use native Safari browser.</div>
+    }
+
     @if (permissionsDenied)
     {
         <div>Looks like permissions have been denied. Please reset site data and try again.</div>
@@ -36,7 +41,7 @@
         {
             <Button Color="ButtonColor.Primary"
             Outline="true"
-                    @onclick="RequestPushNotification">
+            @onclick="RequestPushNotification">
                 Send me push notification in 15-30 seconds
             </Button>
         }
@@ -54,9 +59,28 @@
 
     private bool permissionsDenied;
 
+    private bool isIOs;
+
+    private bool isSafari;
+
+    private string error;
+
     protected override async Task OnInitializedAsync()
     {
-        await RereshPermissionsStatus();
+        await WithErrorReporting(RereshPermissionsStatus);
+    }
+
+    private async Task WithErrorReporting(Func<Task> action)
+    {
+        try
+        {
+            error = null;
+            await action();
+        }
+        catch(Exception ex)
+        {
+            error = ex.Message;
+        }
     }
 
     private async Task RereshPermissionsStatus()
@@ -66,13 +90,20 @@
         permissionsGranted = (permissionsStatus == "granted");
 
         permissionsDenied = (permissionsStatus == "denied");
+
+        isIOs = await jsRuntime.InvokeAsync<bool>("notifications.isIOs");
+
+        isSafari = await jsRuntime.InvokeAsync<bool>("notifications.isSafari");
     }
 
     private async Task GrantPermissions()
     {
-        await jsRuntime.InvokeAsync<string>("notifications.requestPermission");
+        await WithErrorReporting(async () =>
+        {
+            await jsRuntime.InvokeAsync<string>("notifications.requestPermission");
 
-        await RereshPermissionsStatus();
+            await RereshPermissionsStatus();
+        });
     }
 
     [Inject]
@@ -83,37 +114,40 @@
 
     private async Task RequestPushNotification()
     {
-        var fcMtoken = await jsRuntime.InvokeAsync<string>("notifications.getFcmToken");
+       await WithErrorReporting(async () =>
+       {
+           var fcMtoken = await jsRuntime.InvokeAsync<string>("notifications.getFcmToken");
 
-        var httpClient = httpClientFactory.CreateClient("BFF");
+           var httpClient = httpClientFactory.CreateClient("BFF");
 
-        var resp = await httpClient.PostAsync("/api/request-push-notification", new StringContent(
-            System.Text.Json.JsonSerializer.Serialize(
-                new UserNotificationRequest()
-                {
-                        FcmToken = fcMtoken
-                }),
-                System.Text.Encoding.UTF8,
-                "application/json"));
+           var resp = await httpClient.PostAsync("/api/request-push-notification", new StringContent(
+               System.Text.Json.JsonSerializer.Serialize(
+                   new UserNotificationRequest()
+                   {
+                       FcmToken = fcMtoken
+                   }),
+                   System.Text.Encoding.UTF8,
+                   "application/json"));
 
-        if (resp.IsSuccessStatusCode)
-        {
-            await modalService.ShowAsync(new ModalOption()
-                {
-                    Title = "Success",
-                    Message = "Push requested. Try closing the app to make sure it's received by worker.",
-                    Type = ModalType.Success
-                });
-        }
-        else
-        {
-            await modalService.ShowAsync(new ModalOption()
-                {
-                    Title = "Something went wrong",
-                    Message = "Please try later",
-                    Type = ModalType.Danger
-                });
-        }
+           if (resp.IsSuccessStatusCode)
+           {
+               await modalService.ShowAsync(new ModalOption()
+               {
+                   Title = "Success",
+                   Message = "Push requested. Try closing the app to make sure it's received by worker.",
+                   Type = ModalType.Success
+               });
+           }
+           else
+           {
+               await modalService.ShowAsync(new ModalOption()
+               {
+                   Title = "Something went wrong",
+                   Message = "Please try later",
+                   Type = ModalType.Danger
+               });
+           }
+       });
     }
 }
 

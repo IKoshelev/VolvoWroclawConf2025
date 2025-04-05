@@ -77,6 +77,12 @@
 
         window.notifications = {};
 
+        const userAgent = window.navigator.userAgent;
+        const isIOs = userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
+        const isSafari = userAgent.match(/Safari/i) && !userAgent.match(/Chrome/i);
+        window.notifications.isIOs = async () => isIOs;
+        window.notifications.isSafari = async () => isSafari;
+
         window.notifications.checkPermission = async function () {
             return Notification.permission;
         }
