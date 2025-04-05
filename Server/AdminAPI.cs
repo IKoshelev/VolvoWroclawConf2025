@@ -97,7 +97,14 @@ public class AdminAPI(
                         }
                     };
 
-                    string response = await firebaseMessaging.SendAsync(message);
+                    try
+                    {
+                        string response = await firebaseMessaging.SendAsync(message);
+                    }
+                    catch (Exception)
+                    {
+                        
+                    }
                 }
             }
             catch (Exception ex)
