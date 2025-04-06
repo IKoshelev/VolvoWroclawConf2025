@@ -12,9 +12,9 @@ public class User
     public List<string>? FCMTokens { get; set; } = [];
 };
 
-public class DelayedNotfication
+public class DelayedNotification
 {
-    public string DelayedNotficationId { get; set; }
+    public string DelayedNotificationId { get; set; }
     public string UserID { get; set; }
     public DateTime TimeUTC { get; set; }
     public string Text { get; set; }
@@ -28,7 +28,7 @@ internal class CosmosDBContext: DbContext
     });
 
     public DbSet<User> Users { get; set; } 
-    public DbSet<DelayedNotfication> DelayedNotificayions { get; set; }
+    public DbSet<DelayedNotification> DelayedNotificayions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -55,9 +55,9 @@ internal class CosmosDBContext: DbContext
             .HasPartitionKey(x => x.UserId)
             .HasKey(x => x.UserId);
 
-        modelBuilder.Entity<DelayedNotfication>()
-            .ToContainer(nameof(DelayedNotfication))
-            .HasPartitionKey(x => x.DelayedNotficationId)
-            .HasKey(x => x.DelayedNotficationId);
+        modelBuilder.Entity<DelayedNotification>()
+            .ToContainer(nameof(DelayedNotification))
+            .HasPartitionKey(x => x.DelayedNotificationId)
+            .HasKey(x => x.DelayedNotificationId);
     }
 }

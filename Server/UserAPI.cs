@@ -118,9 +118,9 @@ public class UserAPI(
         }
 
         var offset = DateTime.UtcNow.AddSeconds(17);
-        db.DelayedNotificayions.Add(new DelayedNotfication()
+        db.DelayedNotificayions.Add(new DelayedNotification()
         {
-            DelayedNotficationId = Guid.NewGuid().ToString(),
+            DelayedNotificationId = Guid.NewGuid().ToString(),
             UserID = userId,
             TimeUTC = offset,
             Text = data?.Text ?? "Greeting from Volvo Wroclaw Conf 2025!"
