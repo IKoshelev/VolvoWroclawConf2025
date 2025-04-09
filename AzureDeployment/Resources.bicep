@@ -7,7 +7,7 @@ resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = {
   kind: 'GlobalDocumentDB'
   properties: {
     databaseAccountOfferType: 'Standard'
-    //enableFreeTier: true // Enables free-tier 1000 RU/s
+    enableFreeTier: true // Enables free-tier 1000 RU/s
     locations: [
       {
         locationName: location
