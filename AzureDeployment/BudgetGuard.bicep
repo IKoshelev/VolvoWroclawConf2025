@@ -41,9 +41,36 @@ resource runbook 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' =
   }
 }
 
+//https://github.com/manuel284/ARM-AutomationAccountWithWebhook/blob/main/template.json
+var tmpToken11 = uniqueString(subscription().id, resourceGroup().id, automationAccount.name, 'webhook1')
+var tmpToken12 = uniqueString(resourceGroup().id,  automationAccount.name, 'webhook1')
+var tmpToken21 = uniqueString(subscription().id, resourceGroup().id,  automationAccount.name, runbook.name)
+var tmpToken22 = uniqueString(resourceGroup().id,  automationAccount.name, runbook.name)
+var webhookTokenPart1 = substring(format('{0}{1}', tmpToken11,tmpToken12), 0, 20)
+var webhookTokenPart2 = substring(format('{0}{1}', tmpToken21, tmpToken22), 0, 22)
+
+resource webhook 'Microsoft.Automation/automationAccounts/webhooks@2018-06-30' = { //2023-11-01   2018-06-30
+  parent: automationAccount
+  name:  'webhook3'//format('{0}/{1}', automationAccount.name, 'webhook1')
+  properties: {
+    isEnabled: true
+    expiryTime: '2035-01-01T00:00:00Z' 
+    runbook: {
+      name: runbook.name
+    }
+    parameters: {} 
+    uri: format('{0}webhooks?token={1}%2b{2}%3d', 
+      substring(replace(reference(resourceId('Microsoft.Automation/automationAccounts', automationAccount.name), '2023-11-01').automationHybridServiceUrl, '.jrds.', '.webhook.'), 0, indexOf(reference(resourceId('Microsoft.Automation/automationAccounts', automationAccount.name), '2023-11-01').automationHybridServiceUrl, '.azure-automation.net/') + 25), 
+      webhookTokenPart1,
+      webhookTokenPart2)
+  }
+}
+
+output webhookUri string = webhook.properties.uri
+
 resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
   name: '${namePrefix}-budgetGuardActionGroup'
-  location: 'global' //location // available regions limited
+  location: 'global'
   properties: {
     enabled: true
     groupShortName: 'budgetGuard'
@@ -56,14 +83,16 @@ resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
     ]
     automationRunbookReceivers: [
       {
-        name: 'stop resources'
-        serviceUri: 'https://bf1091a2-21de-4f2e-bff1-5fa6a8b22064.webhook.plc.azure-automation.net/webhooks?token=zNxQ9UPFVnt06c5A4yLNox%2bMjBrVo16FKj3o7HyBmTQ%3d'
+        name: 'stop azure fns'
+        serviceUri: webhook.properties.uri
         useCommonAlertSchema: false
         automationAccountId: automationAccount.id
-        runbookName: 'stop-volvo-wroclaw-conf-2025-resources'
-        webhookResourceId: '${automationAccount.id}/webhooks/Alert1743555810678'
+        runbookName: runbook.name
+        webhookResourceId: webhook.id
         isGlobalRunbook: false
       }
     ]
   }
 }
+
+output actionGroupStopAzureFnsId string = actionGroup.id

@@ -65,20 +65,26 @@ resource _2 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-
   }
 }
 
-var managementScriptsContainerName = 'managementscripts'
+var managementScriptsContainerName = 'mngmntsciptspublic'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${namePrefix}storage'
+  name: '${replace(namePrefix, '-','')}storage'
   location: location
   kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'
+  }
+  properties: {
+    allowBlobPublicAccess: true
   }
   resource blobService 'blobServices' = {
     name: 'default'
 
     resource container 'containers' = {
       name: managementScriptsContainerName
+      properties: {
+        publicAccess: 'Blob'  // remember, this is public // todo use token
+      }
     }
   }
 }

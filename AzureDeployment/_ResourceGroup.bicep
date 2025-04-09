@@ -1,6 +1,6 @@
 targetScope='subscription'
 
-@description('The prefix to use for the storage account name will also be used as resource-prefix')
+@description('resourceGroupName will also be used as resource-prefix, lowercase letters and - allowed')
 param resourceGroupName string
 param resourceGroupLocation string
 param alertEmail string
@@ -24,14 +24,14 @@ module budgetGuard 'BudgetGuard.bicep' = {
   name: 'budgetGuardModule'
   scope: rg
   params: {
-    location: 'eastus2'
+    location: 'eastus2' //hardcoded, since resources are available in less regions
     namePrefix: resourceGroupName
     alertEmail: alertEmail
     stopResourcesScriptPath: resources.outputs.stopResourcesScriptPath
   }
 }
 
-resource budget 'Microsoft.Consumption/budgets@2021-10-01' = {
+resource budget 'Microsoft.Consumption/budgets@2023-11-01' = {
   name: '${resourceGroupName}-budget'
   properties: {
     timeGrain: 'Monthly'
@@ -44,9 +44,13 @@ resource budget 'Microsoft.Consumption/budgets@2021-10-01' = {
     notifications: {
       NotificationForExceededBudget1: {
         enabled: true
-        operator: 'GreaterThan'
-        threshold: 1000
+        operator: 'GreaterThanOrEqualTo'
+        threshold: 950
+        thresholdType: 'Actual'
         contactEmails: [alertEmail]
+        contactGroups: [
+          budgetGuard.outputs.actionGroupStopAzureFnsId
+        ]
       }
     }
     filter: {
