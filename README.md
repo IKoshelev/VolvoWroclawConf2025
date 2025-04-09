@@ -38,7 +38,7 @@ Another account you will need is with [Google](https://accounts.google.com/) whi
 
 _please note, that newly created/modified Azure Resource take a few minutes to be visible to other Azure Resources. If something is not showing up in a dropdown where you expect it - give it 2-3 minutes and restart the process._
 
-_If you are already familiar with Azure cloud, you simply deploy provided [Bicep file](./AzureDeployment/_ResourceGroup.bicep)_
+_If you are already familiar with Azure cloud, you can simply deploy provided [Bicep file](./AzureDeployment/_ResourceGroup.bicep)_
 
 First thing you will need to do is [create an Azure Cloud Resource Group](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups). Resource Groups are arbitrary containers that group your Cloud resources together to easily manage their costs and budget alarms. You can have multiple Resource Groups, it's up to you, what kind of logics to use to group resources, it does not restrict any connectivity or interaction between them. You do, however, need to decided on the preferred physical location (data center region). In a multi-region cloud you can easily spread your resources across different location and this **will** affect both their interactions and latency. For your first project - just choose a data-center closest to you and keep everything there. 
 
