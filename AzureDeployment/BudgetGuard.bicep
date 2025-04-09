@@ -51,7 +51,7 @@ var webhookTokenPart2 = substring(format('{0}{1}', tmpToken21, tmpToken22), 0, 2
 
 resource webhook 'Microsoft.Automation/automationAccounts/webhooks@2018-06-30' = { //2023-11-01   2018-06-30
   parent: automationAccount
-  name:  'webhook3'//format('{0}/{1}', automationAccount.name, 'webhook1')
+  name:  'webhook5'//format('{0}/{1}', automationAccount.name, 'webhook1')
   properties: {
     isEnabled: true
     expiryTime: '2035-01-01T00:00:00Z' 
@@ -67,6 +67,8 @@ resource webhook 'Microsoft.Automation/automationAccounts/webhooks@2018-06-30' =
 }
 
 output webhookUri string = webhook.properties.uri
+output webhookiUri2 string = reference(webhook.name).uri
+
 
 resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
   name: '${namePrefix}-budgetGuardActionGroup'
@@ -84,7 +86,7 @@ resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
     automationRunbookReceivers: [
       {
         name: 'stop azure fns'
-        serviceUri: webhook.properties.uri
+        serviceUri: reference(webhook.name).uri
         useCommonAlertSchema: false
         automationAccountId: automationAccount.id
         runbookName: runbook.name
