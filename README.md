@@ -170,7 +170,7 @@ Some of these topics warrant a whole separate book, maybe even several. The list
 
 [Tagging Azure resources](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources) - adding useful discoverable metadata bits to cloud resources like admin email, or responsible department 
 
-[CosmosDB](https://learn.microsoft.com/en-us/azure/cosmos-db/resource-model) - deeper dive when free-tier is no longer enough and you need to fine-tune performance
+[CosmosDB](https://learn.microsoft.com/en-us/azure/cosmos-db/resource-model) - deeper dive when free-tier is no longer enough and you need to fine-tune performance. [This video](https://youtu.be/ju09dqjGq9I?si=8shMRXxR7V1IhqO8) has good pointers how to increase CosmosDB efficiency 
 
 [OpenID](https://openid.net/developers/how-connect-works/), [OAuth](https://auth0.com/intro-to-iam/what-is-oauth-2) - authentication and authorization 
 
